@@ -24,5 +24,30 @@ public class PrimesProject {
             // and we're not using multiprocessing
             //threads[i].run();
         }
+
+        // Let's use the join method for each thread to wait for them to finish
+        // We don't want main to do anything else until every thread finishes
+        for (int i = 0; i < numberOfThreads; i++) {
+            try {
+                // The join method sits around and then exits when 
+                // threads[i] is ready to rejoin the main thread
+                threads[i].join(); // Wait for the thread to finish
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Let's use CountPrimesShare to count primes in the same range
+        CountPrimesShare[] shareThreads = new CountPrimesShare[numberOfThreads];
+        CountPrimesShare.currentValue.setValue(MIN); // Set the current value to the minimum
+        CountPrimesShare.end = MAX; // Set the end value to the maximum
+        // Instantiate each thread
+        for (int i = 0; i < numberOfThreads; i++){
+            shareThreads[i] = new CountPrimesShare(i); // Create a new thread
+        }
+        // Start each thread
+        for (int i = 0; i < numberOfThreads; i++) {
+            shareThreads[i].start(); // Start the thread
+        }
     }
 }
